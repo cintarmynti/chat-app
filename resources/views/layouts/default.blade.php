@@ -9,6 +9,7 @@
   <meta name="author" content="PIXINVENT">
   <title>Chat Application - Stack Responsive Bootstrap 4 Admin Template</title>
     @include('includes.style')
+    @stack('style')
 </head>
 <body class="vertical-layout vertical-menu content-left-sidebar chat-application  menu-expanded fixed-navbar"
 data-open="click" data-menu="vertical-menu" data-col="content-left-sidebar">
@@ -31,6 +32,7 @@ data-open="click" data-menu="vertical-menu" data-col="content-left-sidebar">
     </p>
   </footer>
  {{-- script  --}}
+ @stack('script')
  @include('includes.script')
   <!-- END PAGE LEVEL JS-->
 </body>
