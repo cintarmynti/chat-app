@@ -32,28 +32,15 @@
                     <div class="chats">
                         <div class="chats">
                             <div class="chat">
-                                <div class="chat-avatar">
-                                    <a class="avatar" data-toggle="tooltip" href="#" data-placement="right"
-                                        title="" data-original-title="">
-                                        <img src="{{ asset('app-assets/images/portrait/small/avatar-s-1.png') }}"
-                                            alt="avatar" />
-                                    </a>
-                                </div>
-                                <div class="chat-body">
+                                <div class="chat-body mr-0">
                                     <div class="chat-content">
                                         <p>How can we help? We're here for you!</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="chat chat-left">
-                                <div class="chat-avatar">
-                                    <a class="avatar" data-toggle="tooltip" href="#" data-placement="left"
-                                        title="" data-original-title="">
-                                        <img src="{{ asset('app-assets/images/portrait/small/avatar-s-7.png') }}"
-                                            alt="avatar" />
-                                    </a>
-                                </div>
-                                <div class="chat-body">
+
+                                <div class="chat-body ml-0">
                                     <div class="chat-content">
                                         <p>Hey John, I am looking for the best admin template.</p>
                                         <p>Could you please help me to find it out?</p>
@@ -67,18 +54,21 @@
                     </div>
                 </section>
                 <section class="chat-app-form">
-                    <form class="chat-app-input d-flex">
+                    <form class="chat-app-input d-flex" id="create-item-form">
+                        @csrf
                         <fieldset class="form-group position-relative has-icon-left col-10 m-0">
                             <div class="form-control-position">
                                 <i class="icon-emoticon-smile"></i>
                             </div>
-                            <input type="text" class="form-control" id="iconLeft4" placeholder="Type your message">
+                            <input type="text" name="receiver_id" id="receiver_id">
+                            <input type="text" class="form-control" name="messages" id="iconLeft4"
+                                placeholder="Type your message">
                             <div class="form-control-position control-position-right">
                                 <i class="ft-image"></i>
                             </div>
                         </fieldset>
                         <fieldset class="form-group position-relative has-icon-left col-2 m-0">
-                            <button type="button" class="btn btn-primary"><i class="fa fa-paper-plane-o d-lg-none"></i>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane-o d-lg-none"></i>
                                 <span class="d-none d-lg-block">Send</span>
                             </button>
                         </fieldset>
@@ -97,7 +87,6 @@
             fetchItems();
 
             function fetchItems() {
-
                 $.ajax({
                     method: 'GET',
                     dataType: 'json',
@@ -106,8 +95,9 @@
                         var items = response[0].data;
 
                         var itemHtmlArray = items.map(function(item) {
-                            // Mengganti nama "Elizabeth Elliott" dengan item.name dari response
-                            var htmlContent = '<a href="#" class="media border-0">' +
+                            var htmlContent =
+                                '<a href="#" class="list-contact media border-0 edit-item" data-id="' +
+                                item.id + '">' +
                                 '<div class="media-left pr-1">' +
                                 '<span class="avatar avatar-md avatar-online">' +
                                 '<img class="media-object rounded-circle" src="{{ asset('app-assets/images/portrait/small/avatar-s-3.png') }}" alt="Generic placeholder image"><i></i>' +
@@ -126,12 +116,48 @@
                             return htmlContent;
                         });
 
-
-                        // Menetapkan seluruh HTML konten elemen dengan array elemen HTML
                         $('#item-list').html(itemHtmlArray.join(''));
                     }
                 });
             }
+
+            $(document).on('click', '.list-contact', function() {
+                var itemId = $(this).data('id');
+                console.log(itemId);
+                $('#receiver_id').val(itemId);
+            });
+
+            window.editItem = function(id) {
+                $.ajax({
+                    url: '/chat/' + id,
+                    type: 'GET',
+                    success: function(response) {
+                        $('#name').val(response.name);
+                        $('#description').val(response.description);
+                        // Assuming you have an update button with id="update-item"
+                        $('#update-item').data('id', id);
+                    }
+                });
+            };
+
+            $('#create-item-form').submit(function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/chat",
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        console.log(response)
+                        // Handle the success response
+                    },
+                    error: function(error) {
+                        // Handle the error response
+                    }
+                });
+            });
+
+
         });
     </script>
 @endpush
