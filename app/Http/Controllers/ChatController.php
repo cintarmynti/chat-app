@@ -19,8 +19,16 @@ class ChatController extends Controller
         return response()->json([['data' => $users]]);
     }
 
-    public function getUser($id){
-        $messages = Messages::where('sender_id', Auth::user()->id)->where('receiver_id', $id)->get();
+    public function getUserMessage($id){
+        $messages = Messages::where(function($q) use($id) {
+            $q->where('sender_id', Auth::user()->id);
+            $q->where('receiver_id', $id);
+             })
+            ->oRwhere(function($q) use ($id){
+            $q->where('receiver_id', Auth::user()->id);
+            $q->where('sender_id', $id);
+            })
+            ->get();
         return response()->json(['data' => $messages]);
     }
 
@@ -31,7 +39,7 @@ class ChatController extends Controller
             'messages' => $request->messages,
         ]);
 
-        return response()->json(['data' => $chat], 201);
+        return response()->json(['data' => $chat]);
     }
 
 

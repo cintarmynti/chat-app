@@ -1,6 +1,7 @@
 @extends('layouts.default')
 
 @section('content')
+    <div id="authUserId" data-user-id="{{Auth::user()->id}}"></div>
     <div class="sidebar-left sidebar-fixed">
         <div class="sidebar">
             <div class="sidebar-content card d-none d-lg-block">
@@ -15,8 +16,6 @@
                 <div id="users-list" class="list-group position-relative">
                     <div class="users-list-padding media-list" id="item-list">
 
-
-
                     </div>
                 </div>
             </div>
@@ -30,26 +29,8 @@
                 <section class="chat-app-window">
                     <div class="badge badge-default mb-1">Chat History</div>
                     <div class="chats">
-                        <div class="chats">
-                            <div class="chat">
-                                <div class="chat-body mr-0">
-                                    <div class="chat-content">
-                                        <p>How can we help? We're here for you!</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="chat chat-left">
+                        <div class="chats" id="chat-container">
 
-                                <div class="chat-body ml-0">
-                                    <div class="chat-content">
-                                        <p>Hey John, I am looking for the best admin template.</p>
-                                        <p>Could you please help me to find it out?</p>
-                                    </div>
-                                    <div class="chat-content">
-                                        <p>It should be Bootstrap 4 compatible.</p>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </section>
@@ -61,7 +42,7 @@
                                 <i class="icon-emoticon-smile"></i>
                             </div>
                             <input type="text" name="receiver_id" id="receiver_id">
-                            <input type="text" class="form-control" name="messages" id="iconLeft4"
+                            <input type="text" class="form-control" name="messages" id="msg"
                                 placeholder="Type your message">
                             <div class="form-control-position control-position-right">
                                 <i class="ft-image"></i>
@@ -121,28 +102,55 @@
                 });
             }
 
+            function fetchUserChat(messages) {
+                var authUserId = $('#authUserId').data('user-id');
+                var chatContainer = $('#chat-container');
+                var msg = messages.data;
+                console.log(msg)
+
+                if (Array.isArray(msg)) {
+                    var chatHtml = msg.map(function(message) {
+                        var chatClass = message.sender_id == authUserId ? '' : 'chat-left';
+
+                        return '<div class="chat ' + chatClass + '">' +
+                            '<div class="chat-body ml-0">' +
+                            '<div class="chat-content">' +
+                            '<p>' + message.messages + '</p>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>';
+                    }).join(''); // Join the array into a single string
+
+                    // Set the HTML content of the chat container
+                    chatContainer.html(chatHtml);
+                } else {
+                    console.error('Invalid or missing messages array:', msg);
+                }
+            }
+
+
             $(document).on('click', '.list-contact', function() {
                 var itemId = $(this).data('id');
-                console.log(itemId);
+                // console.log(itemId);
                 $('#receiver_id').val(itemId);
-            });
 
-            window.editItem = function(id) {
                 $.ajax({
-                    url: '/chat/' + id,
-                    type: 'GET',
+                    type: "GET",
+                    url: "/chat/" + itemId,
+                    dataType: "json",
                     success: function(response) {
-                        $('#name').val(response.name);
-                        $('#description').val(response.description);
-                        // Assuming you have an update button with id="update-item"
-                        $('#update-item').data('id', id);
+                        // console.log(response);
+                        fetchUserChat(response)
                     }
                 });
-            };
+
+
+            });
+
 
             $('#create-item-form').submit(function(e) {
                 e.preventDefault();
-
+                var form = $(this);
                 $.ajax({
                     type: "POST",
                     url: "/chat",
@@ -150,12 +158,15 @@
                     success: function(response) {
                         console.log(response)
                         // Handle the success response
+                        form.find('#msg').val('');
                     },
                     error: function(error) {
                         // Handle the error response
                     }
                 });
             });
+
+
 
 
         });
