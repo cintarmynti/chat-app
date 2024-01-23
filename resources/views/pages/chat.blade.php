@@ -85,6 +85,7 @@
                     success: function(response) {
                         var items = response[0].data;
 
+
                         var itemHtmlArray = items.map(function(item) {
                             var htmlContent =
                                 '<a href="#" class="list-contact media border-0 edit-item" data-id="' +
@@ -118,6 +119,11 @@
                 var msg = messages.data;
                 // console.log(msg)
 
+                var channel = pusher.subscribe('my-channel-chat');
+                channel.bind('my-event-chat', function(data) {
+                    handleNewChatMessage(data, authUserId, chatContainer);
+                });
+
                 if (Array.isArray(msg)) {
                     var chatHtml = msg.map(function(message) {
                         var chatClass = message.sender_id == authUserId ? '' : 'chat-left';
@@ -136,6 +142,23 @@
                 } else {
                     console.error('Invalid or missing messages array:', msg);
                 }
+            }
+
+            function handleNewChatMessage(data, authUserId, chatContainer) {
+                console.log(data);
+                var newMessage = data.chatMessage.messages;
+                var chatClass = data.chatMessage.sender_id == authUserId ? ' ' : 'chat-left';
+                var chatHtml = `
+                                    <div class="chat ${chatClass}">
+                                        <div class="chat-body ml-0">
+                                            <div class="chat-content">
+                                                <p>${newMessage}</p>
+                                            </div>
+                                        </div>
+                                    </div>`;
+
+                // Append the new message to the chat container
+                chatContainer.append(chatHtml);
             }
 
 
@@ -169,11 +192,6 @@
                         // console.log(response)
                         // Handle the success response
 
-
-                        var channel = pusher.subscribe('my-channel');
-                        channel.bind('my-event', function(data) {
-                            alert(JSON.stringify(data));
-                        });
                         form.find('#msg').val('');
                     },
                     error: function(error) {
@@ -181,9 +199,6 @@
                     }
                 });
             });
-
-
-
 
         });
     </script>
