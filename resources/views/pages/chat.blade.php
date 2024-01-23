@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 @section('content')
-    <div id="authUserId" data-user-id="{{Auth::user()->id}}"></div>
+    <div id="authUserId" data-user-id="{{ Auth::user()->id }}"></div>
     <div class="sidebar-left sidebar-fixed">
         <div class="sidebar">
             <div class="sidebar-content card d-none d-lg-block">
@@ -62,10 +62,20 @@
 
 @push('script')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 
     <script>
+        // ini untuk pusher nya
+        var pusher = new Pusher('32a5a870d066ac495f8c', {
+            cluster: 'ap1'
+        });
+
+
         $(document).ready(function() {
             fetchItems();
+
+            // Enable pusher logging - don't include this in production
+            Pusher.logToConsole = true;
 
             function fetchItems() {
                 $.ajax({
@@ -106,7 +116,7 @@
                 var authUserId = $('#authUserId').data('user-id');
                 var chatContainer = $('#chat-container');
                 var msg = messages.data;
-                console.log(msg)
+                // console.log(msg)
 
                 if (Array.isArray(msg)) {
                     var chatHtml = msg.map(function(message) {
@@ -156,8 +166,14 @@
                     url: "/chat",
                     data: $(this).serialize(),
                     success: function(response) {
-                        console.log(response)
+                        // console.log(response)
                         // Handle the success response
+
+
+                        var channel = pusher.subscribe('my-channel');
+                        channel.bind('my-event', function(data) {
+                            alert(JSON.stringify(data));
+                        });
                         form.find('#msg').val('');
                     },
                     error: function(error) {

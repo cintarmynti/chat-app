@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewContentNotification;
 use App\Models\Messages;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -39,6 +40,7 @@ class ChatController extends Controller
             'messages' => $request->messages,
         ]);
 
+        event(new NewContentNotification('tesssss'));
         return response()->json(['data' => $chat]);
     }
 
