@@ -41,7 +41,7 @@
                             <div class="form-control-position">
                                 <i class="icon-emoticon-smile"></i>
                             </div>
-                            <input type="text" name="receiver_id" id="receiver_id">
+                            <input type="hidden" name="receiver_id" id="receiver_id">
                             <input type="text" class="form-control" name="messages" id="msg"
                                 placeholder="Type your message">
                             <div class="form-control-position control-position-right">
@@ -100,7 +100,7 @@
                                 '<span class="font-small-3 float-right primary">4:14 AM</span>' +
                                 '</h6>' +
                                 '<p class="list-group-item-text text-muted mb-0"><i class="ft-check primary font-small-2"></i> Okay' +
-                                '<span class="float-right primary"><i class="font-medium-1 icon-pin blue-grey lighten-3"></i></span>' +
+                                '<span class="float-right primary"></span>' +
                                 '</p>' +
                                 '</div>' +
                                 '</a>';

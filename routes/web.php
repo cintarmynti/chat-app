@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,6 +26,10 @@ Route::post('/chat', [ChatController::class, 'store']);
 Route::get('/chat/{id}', [ChatController::class, 'getUserMessage']);
 Route::get('/user', [ChatController::class, 'user']);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+Route::get('/profile-user', [ProfileController::class, 'user']);
+Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
 });
 
