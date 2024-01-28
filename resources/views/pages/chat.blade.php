@@ -7,7 +7,7 @@
             <div class="sidebar-content card d-none d-lg-block">
                 <div class="card-body chat-fixed-search">
                     <fieldset class="form-group position-relative has-icon-left m-0">
-                        <input type="text" class="form-control" id="iconLeft4" placeholder="Search user">
+                        <input type="text" class="form-control" id="inputPencarian" placeholder="Search user">
                         <div class="form-control-position">
                             <i class="ft-search"></i>
                         </div>
@@ -77,6 +77,8 @@
             // Enable pusher logging - don't include this in production
             Pusher.logToConsole = true;
 
+
+            //fungsi untuk menampilkan list kontak
             function fetchItems() {
                 $.ajax({
                     method: 'GET',
@@ -89,7 +91,7 @@
                         var itemHtmlArray = items.map(function(item) {
                             var htmlContent =
                                 '<a href="#" class="list-contact media border-0 edit-item" data-id="' +
-                                item.id + '">' +
+                                item.id + '" data-nama="' + item.name + '">' +
                                 '<div class="media-left pr-1">' +
                                 '<span class="avatar avatar-md avatar-online">' +
                                 '<img class="media-object rounded-circle" src="{{ asset('app-assets/images/portrait/small/avatar-s-3.png') }}" alt="Generic placeholder image"><i></i>' +
@@ -113,6 +115,29 @@
                 });
             }
 
+            //trigger untuk fungsi pencarian
+            $('#inputPencarian').keyup(function() {
+                var kataKunci = $(this).val();
+                cariUser(kataKunci);
+            })
+
+            //fungsi untuk menampilkan list kontak yang dicari
+            function cariUser(nama) {
+                var listKontak = $('.list-contact');
+
+                listKontak.each(function(){
+                    var namaUser = $(this).data('nama').toLowerCase();
+
+                    if(namaUser.includes(nama.toLowerCase())){
+                        $(this).show();
+                    }else{
+                        $(this).hide();
+                    }
+                });
+            }
+
+
+            //fitur untuk menampilkn chat
             function fetchUserChat(messages) {
                 var authUserId = $('#authUserId').data('user-id');
                 var chatContainer = $('#chat-container');
@@ -144,6 +169,7 @@
                 }
             }
 
+            //fitur untuk menambahkan chat baru
             function handleNewChatMessage(data, authUserId, chatContainer) {
                 console.log(data);
                 var newMessage = data.chatMessage.messages;
@@ -161,7 +187,7 @@
                 chatContainer.append(chatHtml);
             }
 
-
+            //Dom apabila di klik sesuai id user akan menjalankan fungsi fetchUserChat
             $(document).on('click', '.list-contact', function() {
                 var itemId = $(this).data('id');
                 // console.log(itemId);
@@ -180,7 +206,7 @@
 
             });
 
-
+            //fungsi untuk mengirim pesan kepada kontak lain
             $('#create-item-form').submit(function(e) {
                 e.preventDefault();
                 var form = $(this);

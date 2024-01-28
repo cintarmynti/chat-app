@@ -45,5 +45,11 @@ class ChatController extends Controller
         return response()->json(['data' => $chat]);
     }
 
+    public function search(Request $request){
+        $query = $request->input('cari');
+        $user = User::where('name', 'like', '%' . $query . '%')->get();
+        return response()->json($user);
+    }
+
 
 }
