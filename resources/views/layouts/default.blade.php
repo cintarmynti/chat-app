@@ -10,6 +10,11 @@
   <title>Chat Application - Stack Responsive Bootstrap 4 Admin Template</title>
     @include('includes.style')
     @stack('style')
+    <style>
+        .mega-dropdown-menu{
+            width: 50%;
+        }
+    </style>
 </head>
 <body class="vertical-layout vertical-menu content-left-sidebar chat-application  menu-expanded fixed-navbar"
 data-open="click" data-menu="vertical-menu" data-col="content-left-sidebar">

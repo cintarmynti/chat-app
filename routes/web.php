@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\GroupChatController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,7 +22,7 @@ Route::get('/', function () {
 
 Route::group(['middleware' => 'auth'], function () {
 
-Route::get('/chat', [ChatController::class, 'index']);
+Route::get('/chat', [ChatController::class, 'index'])->name('chat');
 Route::post('/chat', [ChatController::class, 'store']);
 Route::get('/chat/{id}', [ChatController::class, 'getUserMessage']);
 Route::get('/user', [ChatController::class, 'user']);
@@ -32,6 +33,12 @@ Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
 Route::get('/profile-user', [ProfileController::class, 'user']);
 Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
+Route::get('/group', [GroupChatController::class, 'index'])->name('group');
+Route::post('/group', [GroupChatController::class, 'store'])->name('group.store');
+Route::get('/group/create', [GroupChatController::class, 'create'])->name('group.create');
+Route::get('/group-list', [GroupChatController::class, 'group'])->name('group.list');
+Route::post('/group-send', [GroupChatController::class, 'send'])->name('group.send');
+Route::get('/group/{id}', [GroupChatController::class, 'getGroupMessage'])->name('group.chat');
 });
 
 
