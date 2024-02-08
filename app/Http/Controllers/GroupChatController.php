@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewMessage;
 use App\Models\group_members;
 use App\Models\group_message;
 use App\Models\Groups;
@@ -59,13 +60,15 @@ class GroupChatController extends Controller
             'content' => $request->messages,
         ]);
 
-        // event(new NewMessage($chat));
-        return response()->json(['data' => $chat]);
+        $newChat = group_message::with('group','users')->where('id', $chat->id)->first();
+
+        event(new NewMessage($newChat));
+        return response()->json(['data' => $newChat]);
     }
 
     public function getGroupMessage($id){
         $group = group_message::with('group', 'users')->where('group_id', $id)->get();
         return response()->json(['data' => $group]);
-
     }
+
 }

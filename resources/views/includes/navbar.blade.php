@@ -49,9 +49,6 @@
                             <li>
                                 <a class="dropdown-item" href="{{route('group.create')}}">New Group</a>
                             </li>
-                            <li>
-                                <a class="dropdown-item" href="">New Chat</a>
-                            </li>
                         </ul>
                     </li>
 

@@ -7,7 +7,7 @@
             <div class="sidebar-content card d-none d-lg-block">
                 <div class="card-body chat-fixed-search">
                     <fieldset class="form-group position-relative has-icon-left m-0">
-                        <input type="text" class="form-control" id="inputPencarian" placeholder="Search user">
+                        <input type="text" class="form-control" id="inputPencarian" placeholder="Search Group">
                         <div class="form-control-position">
                             <i class="ft-search"></i>
                         </div>
@@ -41,7 +41,7 @@
                             <div class="form-control-position">
                                 <i class="icon-emoticon-smile"></i>
                             </div>
-                            <input type="text" name="receiver_id" id="receiver_id">
+                            <input type="hidden" name="receiver_id" id="receiver_id">
                             <input type="text" class="form-control" name="messages" id="msg"
                                 placeholder="Type your message">
                             <div class="form-control-position control-position-right">
@@ -66,7 +66,14 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 
     <script>
+        // ini untuk pusher nya
+        var pusher = new Pusher('32a5a870d066ac495f8c', {
+            cluster: 'ap1'
+        });
+
         $(document).ready(function() {
+            // Enable pusher logging - don't include this in production
+            Pusher.logToConsole = true;
 
             fetchItems();
 
@@ -113,22 +120,31 @@
                 var authUserId = $('#authUserId').data('user-id');
                 var chatContainer = $('#chat-container');
                 var msg = messages.data;
-                console.log(msg)
+                // console.log(msg)
 
+                var channel = pusher.subscribe('my-channel-chat');
+                channel.bind('my-event-chat', function(data) {
+                    handleNewChatMessage(data, authUserId, chatContainer);
+                });
 
 
                 if (Array.isArray(msg)) {
                     var chatHtml = msg.map(function(message) {
                         var chatClass = message.sender_id == authUserId ? '' : 'chat-left';
 
-                        return '<div class="chat ' + chatClass + '">' +
-                            '<div class="chat-body ml-0">' +
-                            '<div class="chat-content">' +
-                            '<span class="sender-name">'+ message.users.name +'</span>'+
-                            '<p>' + message.content + '</p>' +
-                            '</div>' +
-                            '</div>' +
-                            '</div>';
+                        return `
+                        <div class="chat ${chatClass}">
+                            <div class="chat-body">
+                            <div class="chat-content">
+                                <p>
+                                <span class="sender-name">${message.users.name}</span><br>
+                                ${message.content}
+                                <span class="sent-time">12.20</span>
+                                </p>
+                            </div>
+                            </div>
+                        </div>
+                        `;
                     }).join(''); // Join the array into a single string
 
                     // Set the HTML content of the chat container
@@ -136,6 +152,48 @@
                 } else {
                     console.error('Invalid or missing messages array:', msg);
                 }
+            }
+
+            $('#inputPencarian').keyup(function() {
+                var kataKunci = $(this).val();
+                cariUser(kataKunci);
+            })
+
+            //fungsi untuk menampilkan list kontak yang dicari
+            function cariUser(nama) {
+                var listKontak = $('.list-contact');
+
+                listKontak.each(function(){
+                    var namaUser = $(this).data('nama').toLowerCase();
+
+                    if(namaUser.includes(nama.toLowerCase())){
+                        $(this).show();
+                    }else{
+                        $(this).hide();
+                    }
+                });
+            }
+
+            function handleNewChatMessage(data, authUserId, chatContainer) {
+                console.log(data);
+                var newMessage = data.chatMessage.content;
+                var chatClass = data.chatMessage.sender_id == authUserId ? ' ' : 'chat-left';
+                var senderName = data.chatMessage.users.name;
+                var chatHtml = `
+                <div class="chat ${chatClass}">
+                            <div class="chat-body">
+                            <div class="chat-content">
+                                <p>
+                                <span class="sender-name">${senderName}</span><br>
+                                ${newMessage}
+                                <span class="sent-time">12.20</span>
+                                </p>
+                            </div>
+                            </div>
+                        </div>`;
+
+                // Append the new message to the chat container
+                chatContainer.append(chatHtml);
             }
 
             $(document).on('click', '.list-contact', function() {
