@@ -89,12 +89,13 @@
 
 
                         var itemHtmlArray = items.map(function(item) {
+                            var imageUrl = item.image_path ? 'storage/' + item.image_path : '/app-assets/images/profile-kosong.jpg';
                             var htmlContent =
                                 '<a href="#" class="list-contact media border-0 edit-item" data-id="' +
                                 item.id + '" data-nama="' + item.name + '">' +
                                 '<div class="media-left pr-1">' +
                                 '<span class="avatar avatar-md avatar-online">' +
-                                '<img class="media-object rounded-circle" src="{{ asset('app-assets/images/portrait/small/avatar-s-3.png') }}" alt="Generic placeholder image"><i></i>' +
+                                    '<img class="media-object rounded-circle" src="' + imageUrl + '" alt="Generic placeholder image"><i></i>' +
                                 '</span>' +
                                 '</div>' +
                                 '<div class="media-body w-100">' +
@@ -125,12 +126,12 @@
             function cariUser(nama) {
                 var listKontak = $('.list-contact');
 
-                listKontak.each(function(){
+                listKontak.each(function() {
                     var namaUser = $(this).data('nama').toLowerCase();
 
-                    if(namaUser.includes(nama.toLowerCase())){
+                    if (namaUser.includes(nama.toLowerCase())) {
                         $(this).show();
-                    }else{
+                    } else {
                         $(this).hide();
                     }
                 });

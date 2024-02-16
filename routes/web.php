@@ -32,6 +32,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
 Route::get('/profile-user', [ProfileController::class, 'user']);
 Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+Route::get('/profile-image', [ProfileController::class, 'imageProfile'])->name('profile.image');
 
 Route::get('/group', [GroupChatController::class, 'index'])->name('group');
 Route::post('/group', [GroupChatController::class, 'store'])->name('group.store');

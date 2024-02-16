@@ -6,8 +6,7 @@
                         href="#"><i class="ft-menu font-large-1"></i></a></li>
                 <li class="nav-item">
                     <a class="navbar-brand" href="index.html">
-                        <img class="brand-logo" alt="stack admin logo"
-                            src="{{ asset('app-assets/images/logo/stack-logo-light.png') }}">
+
                         <h2 class="brand-text">Stack</h2>
                     </a>
                 </li>
@@ -60,8 +59,7 @@
                     <li class="dropdown dropdown-user nav-item">
                         <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
                             <span class="avatar avatar-online">
-                                <img src="{{ asset('app-assets/images/portrait/small/avatar-s-1.png') }}"
-                                    alt="avatar"><i></i></span>
+                                <img id="avatar" class="image" alt="avatar"><i></i></span>
                             <span class="user-name"> {{ Auth::user()->name }}</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="/profile">
@@ -81,3 +79,28 @@
         </div>
     </div>
 </nav>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+     $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/profile-image",
+            dataType: "json",
+            success: function (response) {
+                // console.log("halo");
+                console.log(response);
+
+                if(response.image_path != null){
+                    var imageUrl = 'storage/'+response.image_path;
+                    $('#avatar').attr('src', imageUrl);
+                }else{
+                    var imageUrl = '/app-assets/images/profile-kosong.jpg'
+                    $('#avatar').attr('src', imageUrl);
+                }
+
+            }
+        });
+    });
+</script>

@@ -19,12 +19,29 @@ class ProfileController extends Controller
     }
 
     public function update(Request $request){
+
         $user = User::find(Auth::user()->id);
-        $user->update([
+        $data = [
             'name' => $request->input('name'),
-            'email' => $request->input('email')
-        ]);
+            'email' => $request->input('email'),
+        ];
+
+        if ($request->hasFile('image')) {
+            // dd('masuk');
+            $image = $request->file('image');
+            $imageName = time().'.'.$image->getClientOriginalExtension();
+            $image->storeAs('public/images', $imageName);
+            $data['image_path'] = 'images/'.$imageName;
+        }
+
+        $user->update($data);
 
         return redirect()->route('profile');
+    }
+
+    public function imageProfile(){
+        $user = User::find(Auth::user()->id);
+        // dd($user);
+        return response()->json($user);
     }
 }
