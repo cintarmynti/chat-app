@@ -65,13 +65,13 @@
                         <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="/profile">
                                 <i class="ft-user"></i> Edit Profile</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                                onclick="event.preventDefault();
-                      document.getElementById('logout-form').submit();"><i
+                            <a class="dropdown-item"  href="{{ route('logout') }}"
+                            onclick="event.preventDefault();
+                                          document.getElementById('logout-form').submit();"><i
                                     class="ft-power"></i> {{ __('Logout') }}</a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
                         </div>
                     </li>
                 </ul>

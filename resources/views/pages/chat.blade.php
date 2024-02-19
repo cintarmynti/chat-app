@@ -85,24 +85,25 @@
                     dataType: 'json',
                     url: "http://127.0.0.1:8000/user",
                     success: function(response) {
-                        var items = response[0].data;
+                        console.log(response.data);
+                        var items = response.data;
 
 
                         var itemHtmlArray = items.map(function(item) {
                             var imageUrl = item.image_path ? 'storage/' + item.image_path : '/app-assets/images/profile-kosong.jpg';
                             var htmlContent =
                                 '<a href="#" class="list-contact media border-0 edit-item" data-id="' +
-                                item.id + '" data-nama="' + item.name + '">' +
+                                item.user_id + '" data-nama="' + item.user_name + '">' +
                                 '<div class="media-left pr-1">' +
                                 '<span class="avatar avatar-md avatar-online">' +
                                     '<img class="media-object rounded-circle" src="' + imageUrl + '" alt="Generic placeholder image"><i></i>' +
                                 '</span>' +
                                 '</div>' +
                                 '<div class="media-body w-100">' +
-                                '<h6 class="list-group-item-heading">' + item.name +
-                                '<span class="font-small-3 float-right primary">4:14 AM</span>' +
+                                '<h6 class="list-group-item-heading">' + item.user_name +
+                                '<span class="font-small-3 float-right primary">'+ item.last_chat_time +'</span>' +
                                 '</h6>' +
-                                '<p class="list-group-item-text text-muted mb-0"><i class="ft-check primary font-small-2"></i> Okay' +
+                                '<p class="list-group-item-text text-muted mb-0"><i class="ft-check primary font-small-2"></i> '+ item.last_message +
                                 '<span class="float-right primary"></span>' +
                                 '</p>' +
                                 '</div>' +
@@ -172,7 +173,7 @@
 
             //fitur untuk menambahkan chat baru
             function handleNewChatMessage(data, authUserId, chatContainer) {
-                console.log(data);
+                // console.log(data);
                 var newMessage = data.chatMessage.messages;
                 var chatClass = data.chatMessage.sender_id == authUserId ? ' ' : 'chat-left';
                 var chatHtml = `
