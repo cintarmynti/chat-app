@@ -1,5 +1,14 @@
 @extends('layouts.default')
 
+@push('style')
+    <style>
+        .sidebar-content{
+            height: 100vh;
+            background-color: white;
+        }
+    </style>
+@endpush
+
 @section('content')
     <div id="authUserId" data-user-id="{{ Auth::user()->id }}"></div>
     <div class="sidebar-left sidebar-fixed">
@@ -84,24 +93,26 @@
                     dataType: 'json',
                     url: "/group-list",
                     success: function(response) {
-                        // console.log(response.data);
+                        console.log(response);
                         var items = response.data;
 
                         var itemHtmlArray = items.map(function(item) {
+                            var imageUrl = item.image_group ? 'storage/' + item.image_group  : '/app-assets/images/group-none.jpeg';
+
                             var htmlContent =
                                 '<a href="#" class="list-contact media border-0 edit-item" data-id="' +
-                                item.id + '" data-nama="' + item.group_name + '">' +
+                                item.group_id + '" data-nama="' + item.group_name + '">' +
                                 '<div class="media-left pr-1">' +
                                 '<span class="avatar avatar-md avatar-online">' +
-                                '<img class="media-object rounded-circle" src="{{ asset('app-assets/images/portrait/small/avatar-s-3.png') }}" alt="Generic placeholder image"><i></i>' +
+                                '<img class="media-object rounded-circle" src="'+ imageUrl +'" alt="Generic placeholder image"><i></i>' +
                                 '</span>' +
                                 '</div>' +
                                 '<div class="media-body w-100">' +
                                 '<h6 class="list-group-item-heading">' + item.group_name +
                                 // Perbaikan: Mengganti item.name menjadi item.group_name
-                                '<span class="font-small-3 float-right primary">4:14 AM</span>' +
+                                '<span class="font-small-3 float-right primary">'+ item.last_chat_time +'</span>' +
                                 '</h6>' +
-                                '<p class="list-group-item-text text-muted mb-0"><i class="ft-check primary font-small-2"></i> Okay' +
+                                '<p class="list-group-item-text text-muted mb-0"><i class="ft-check primary font-small-2"></i>'+ item.last_message +
                                 '<span class="float-right primary"></span>' +
                                 '</p>' +
                                 '</div>' +
@@ -120,7 +131,7 @@
                 var authUserId = $('#authUserId').data('user-id');
                 var chatContainer = $('#chat-container');
                 var msg = messages.data;
-                // console.log(msg)
+                console.log(msg)
 
                 var channel = pusher.subscribe('my-channel-chat');
                 channel.bind('my-event-chat', function(data) {
@@ -139,7 +150,7 @@
                                 <p>
                                 <span class="sender-name">${message.users.name}</span><br>
                                 ${message.content}
-                                <span class="sent-time">12.20</span>
+                                <span class="sent-time">${message.format_created_at}</span>
                                 </p>
                             </div>
                             </div>
@@ -175,7 +186,7 @@
             }
 
             function handleNewChatMessage(data, authUserId, chatContainer) {
-                console.log(data);
+                // console.log(data);
                 var newMessage = data.chatMessage.content;
                 var chatClass = data.chatMessage.sender_id == authUserId ? ' ' : 'chat-left';
                 var senderName = data.chatMessage.users.name;

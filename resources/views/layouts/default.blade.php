@@ -14,6 +14,12 @@
         .mega-dropdown-menu{
             width: 50%;
         }
+
+        .navbar-container{
+           margin-left: 0px !important;
+        }
+
+
     </style>
 </head>
 <body class="vertical-layout vertical-menu content-left-sidebar chat-application  menu-expanded fixed-navbar"
@@ -24,7 +30,7 @@ data-open="click" data-menu="vertical-menu" data-col="content-left-sidebar">
   <!-- ////////////////////////////////////////////////////////////////////////////-->
  {{-- sidebar --}}
  @include('includes.sidebar')
-  <div class="app-content content">
+  <div class="app-content content" style="margin-left: 0px !important">
     {{-- content --}}
     @yield('content')
   </div>

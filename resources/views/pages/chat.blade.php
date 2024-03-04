@@ -1,5 +1,21 @@
 @extends('layouts.default')
 
+@push('style')
+    <style>
+        .users-list-padding{
+            background-color: white;
+            height: 100vh;
+        }
+
+        .list-contact{
+            background-color: white;
+        }
+
+        .sidebar-left{
+            padding-left: 0;
+        }
+    </style>
+@endpush
 @section('content')
     <div id="authUserId" data-user-id="{{ Auth::user()->id }}"></div>
     <div class="sidebar-left sidebar-fixed">
