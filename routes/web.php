@@ -40,6 +40,7 @@ Route::get('/group/create', [GroupChatController::class, 'create'])->name('group
 Route::get('/group-list', [GroupChatController::class, 'group'])->name('group.list');
 Route::post('/group-send', [GroupChatController::class, 'send'])->name('group.send');
 Route::get('/group/{id}', [GroupChatController::class, 'getGroupMessage'])->name('group.chat');
+Route::get('/group-member/{id}', [GroupChatController::class, 'anggota'])->name('group.members');
 });
 
 

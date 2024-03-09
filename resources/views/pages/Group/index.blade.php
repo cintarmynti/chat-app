@@ -2,9 +2,33 @@
 
 @push('style')
     <style>
-        .sidebar-content{
+        .sidebar-content {
             height: 100vh;
             background-color: white;
+
+        }
+
+        .chat-app-window {
+            margin: 0;
+            padding: 0 !important;
+            position: relative;
+
+        }
+
+        .nav-group {
+            position: fixed;
+            width: 90%;
+            height: 70px;
+            z-index: 100;
+        }
+
+        .chats {
+            margin-top: 50px;
+            /* Menambahkan margin atas pada .chats untuk menghindari tumpang tindih dengan .nav-group */
+        }
+
+        .icon:hover {
+            color: white;
         }
     </style>
 @endpush
@@ -36,7 +60,27 @@
             </div>
             <div class="content-body">
                 <section class="chat-app-window">
+                    <div class="d-flex bg-primary m-0 p-0 nav-group hidden" id="nav-group">
+                        <div class="ml-3 media-left pr-1 align-self-center">
+                            <span class="avatar avatar-md avatar-online">
+                                <img class="media-object rounded-circle" id="img-group"
+                                    src="/app-assets/images/group-none.jpeg" alt="Generic placeholder image">
+                                <i></i>
+                            </span>
+                        </div>
+                        <div class="align-self-center">
+                            <h4 id="group-name"></h4>
+                            <i class="ft-eye mr-2 icon" id="lihatAnggota" data-toggle="modal" data-target="#p"></i>
+                            <i class="ft-edit mr-2 icon" id="editGroup" data-toggle="modal" data-target="#editGrup1"></i>
+                            <i class="ft-plus-square mr-2 icon"></i>
+
+
+                        </div>
+                    </div>
+
+
                     <div class="badge badge-default mb-1">Chat History</div>
+
                     <div class="chats">
                         <div class="chats" id="chat-container">
 
@@ -68,6 +112,64 @@
             </div>
         </div>
     </div>
+
+
+    {{-- modal list anggota --}}
+    <!-- Modal -->
+    <div class="modal fade" id="p" tabindex="-1" role="dialog" aria-labelledby="pLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pLabel">Anggota Grup</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body conten-anggota">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+       {{-- modal list anggota --}}
+    <!-- Modal -->
+    <div class="modal fade" id="editGrup1" tabindex="-1" role="dialog" aria-labelledby="editGrup1Label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editGrup1Label">Anggota Grup</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <fieldset class="form-group">
+                        <label for="basicInput">Group Name</label>
+                        <input type="text" class="form-control input1" id="basicInput">
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <label for="basicInput">desc</label>
+                        <input type="text" class="form-control input2" id="basicInput">
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <label for="basicInput">image</label>
+                        <input type="text" class="form-control input3" id="basicInput">
+                      </fieldset>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 @endsection
 
 @push('script')
@@ -93,26 +195,30 @@
                     dataType: 'json',
                     url: "/group-list",
                     success: function(response) {
-                        console.log(response);
+                        //    console.log(response);
                         var items = response.data;
 
                         var itemHtmlArray = items.map(function(item) {
-                            var imageUrl = item.image_group ? 'storage/' + item.image_group  : '/app-assets/images/group-none.jpeg';
+                            var imageUrl = item.image_group ? 'storage/' + item.image_group :
+                                '/app-assets/images/group-none.jpeg';
 
                             var htmlContent =
                                 '<a href="#" class="list-contact media border-0 edit-item" data-id="' +
                                 item.group_id + '" data-nama="' + item.group_name + '">' +
                                 '<div class="media-left pr-1">' +
                                 '<span class="avatar avatar-md avatar-online">' +
-                                '<img class="media-object rounded-circle" src="'+ imageUrl +'" alt="Generic placeholder image"><i></i>' +
+                                '<img class="media-object rounded-circle" src="' + imageUrl +
+                                '" alt="Generic placeholder image"><i></i>' +
                                 '</span>' +
                                 '</div>' +
                                 '<div class="media-body w-100">' +
                                 '<h6 class="list-group-item-heading">' + item.group_name +
                                 // Perbaikan: Mengganti item.name menjadi item.group_name
-                                '<span class="font-small-3 float-right primary">'+ item.last_chat_time +'</span>' +
+                                '<span class="font-small-3 float-right primary">' + item
+                                .last_chat_time + '</span>' +
                                 '</h6>' +
-                                '<p class="list-group-item-text text-muted mb-0"><i class="ft-check primary font-small-2"></i>'+ item.last_message +
+                                '<p class="list-group-item-text text-muted mb-0"><i class="ft-check primary font-small-2"></i>' +
+                                item.last_message +
                                 '<span class="float-right primary"></span>' +
                                 '</p>' +
                                 '</div>' +
@@ -127,11 +233,12 @@
                 });
             }
 
+            //menampilkan isi chat
             function fetchhGroupChat(messages) {
                 var authUserId = $('#authUserId').data('user-id');
                 var chatContainer = $('#chat-container');
                 var msg = messages.data;
-                console.log(msg)
+                // console.log(msg)
 
                 var channel = pusher.subscribe('my-channel-chat');
                 channel.bind('my-event-chat', function(data) {
@@ -174,12 +281,12 @@
             function cariUser(nama) {
                 var listKontak = $('.list-contact');
 
-                listKontak.each(function(){
+                listKontak.each(function() {
                     var namaUser = $(this).data('nama').toLowerCase();
 
-                    if(namaUser.includes(nama.toLowerCase())){
+                    if (namaUser.includes(nama.toLowerCase())) {
                         $(this).show();
-                    }else{
+                    } else {
                         $(this).hide();
                     }
                 });
@@ -218,10 +325,86 @@
                     dataType: "json",
                     success: function(response) {
                         // console.log(response);
+                        var imageGroup = response.group_id.image_group ? 'storage/' + response
+                            .group_id.image_group :
+                            '/app-assets/images/group-none.jpeg';
+                        $('#img-group').attr('src', imageGroup);
+
+                        $('#group-name').text(response.group_id.group_name)
+                        $('#nav-group').removeClass('hidden');
+                        $('#lihatAnggota').data('anggota', itemId);
+                        $('#editGroup').data('edit', itemId);
+
                         fetchhGroupChat(response);
                     }
                 });
+            });
 
+            // ketika klik icon mata
+            $(document).on('click', '.ft-eye', function() {
+                var memberId = $(this).data('anggota');
+
+                $.ajax({
+                    type: "GET",
+                    url: "/group-member/" + memberId,
+                    dataType: "json",
+                    success: function(response) {
+                        var imageExist = 'http://127.0.0.1:8000/storage/';
+                        var imageNull =
+                            'http://127.0.0.1:8000/app-assets/images/profile-kosong.jpg'
+
+                        // Assuming you have a container element to display the dynamic content
+                        var container = $('.conten-anggota');
+
+                        // Clear the container content before adding new content
+                        container.empty();
+
+                        $.each(response.data, function(index, item) {
+                            var imageUrl = item.users.image_path ? imageExist + item
+                                .users.image_path : imageNull;
+
+                            // Create HTML string for each user
+                            var newContent =
+                                '<a href="#" class="media border-0 my-1">' +
+                                '<div class="media-left pr-1">' +
+                                '<span class="avatar avatar-md avatar-online">' +
+                                '<img class="media-object rounded-circle" src="' +
+                                imageUrl +
+                                '" alt="Generic placeholder image">' +
+                                '<i></i>' +
+                                '</span>' +
+                                '</div>' +
+                                '<div class="media-body w-100">' +
+                                '<h6 class="list-group-item-heading">' + item.users
+                                .name + '</h6>' +
+                                '<p class="list-group-item-text text-muted mb-0">' +
+                                item.users.desc + '</p>' +
+                                '</div>' +
+                                '</a>';
+
+                            // Set the HTML content of the container
+                            container.html(container.html() + newContent);
+                        });
+                    }
+                });
+
+            });
+
+            // ketika klik icon edit
+            $(document).on('click', '.ft-edit', function() {
+                var editId = $(this).data('edit');
+
+                $.ajax({
+                    type: "GET",
+                    url: "/group/" + editId,
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                        $('.input1').val(response.group_id.group_name)
+                        $('.input2').val(response.group_id.desc)
+
+                    }
+                });
 
             });
 
@@ -237,7 +420,6 @@
                     success: function(response) {
                         // console.log(response)
                         // Handle the success response
-
                         form.find('#msg').val('');
                     },
                     error: function(error) {
@@ -245,6 +427,8 @@
                     }
                 });
             });
+
+
         });
     </script>
 @endpush

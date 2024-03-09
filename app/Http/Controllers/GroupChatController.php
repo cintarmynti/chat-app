@@ -100,11 +100,18 @@ class GroupChatController extends Controller
 
     public function getGroupMessage($id){
         $group = group_message::with('group', 'users')->where('group_id', $id)->get();
+        $group_id = Groups::find($id);
+
 
         foreach($group as $g){
             $g->format_created_at = Carbon::parse($g->created_at)->format('h:i A');
         }
-        return response()->json(['data' => $group]);
+        return response()->json(['data' => $group, 'group_id' => $group_id]);
+    }
+
+    public function anggota($id){
+        $anggota = group_members::with('users')->where('group_id', $id)->get();
+        return response()->json(['data' => $anggota]);
     }
 
 }
