@@ -137,39 +137,48 @@
 
 
 
-       {{-- modal list anggota --}}
+    {{-- modal Edit anggota --}}
     <!-- Modal -->
-    <div class="modal fade" id="editGrup1" tabindex="-1" role="dialog" aria-labelledby="editGrup1Label" aria-hidden="true">
+    <div class="modal fade" id="editGrup1" tabindex="-1" role="dialog" aria-labelledby="editGrup1Label"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editGrup1Label">Anggota Grup</h5>
+                    <h5 class="modal-title" id="editGrup1Label">Edit Grup</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <fieldset class="form-group">
-                        <label for="basicInput">Group Name</label>
-                        <input type="text" class="form-control input1" id="basicInput">
-                      </fieldset>
-                      <fieldset class="form-group">
-                        <label for="basicInput">desc</label>
-                        <input type="text" class="form-control input2" id="basicInput">
-                      </fieldset>
-                      <fieldset class="form-group">
-                        <label for="basicInput">image</label>
-                        <input type="text" class="form-control input3" id="basicInput">
-                      </fieldset>
+                    <form action="{{ route('group.update') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('put')
+                        <fieldset class="form-group">
+                            <label for="basicInput">Group Name</label>
+                            <input type="text" name="group_name" class="form-control input1" id="basicInput">
+                        </fieldset>
+                        <fieldset class="form-group">
+                            <label for="basicInput">desc</label>
+                            <input type="text" name="desc" class="form-control input2" id="basicInput">
+                        </fieldset>
+                            <input type="hidden" name="id" class="form-control input4" id="basicInput">
+                        <fieldset class="form-group">
+                            <label for="basicInput">image</label>
+                            <input type="file" name="image_file" class="form-control input3" id="basicInput">
+                        </fieldset>
+                        <img src="" id="image_edit" width="100" height="100" alt="">
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+
                 </div>
+                </form>
+
             </div>
         </div>
     </div>
-
-
 @endsection
 
 @push('script')
@@ -402,6 +411,11 @@
                         console.log(response);
                         $('.input1').val(response.group_id.group_name)
                         $('.input2').val(response.group_id.desc)
+                        $('.input4').val(response.group_id.id)
+                        var imageGroup = response.group_id.image_group ? 'storage/' + response
+                            .group_id.image_group :
+                            '/app-assets/images/group-none.jpeg';
+                        $('#image_edit').attr('src', imageGroup);
 
                     }
                 });

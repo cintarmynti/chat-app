@@ -36,6 +36,7 @@ Route::get('/profile-image', [ProfileController::class, 'imageProfile'])->name('
 
 Route::get('/group', [GroupChatController::class, 'index'])->name('group');
 Route::post('/group', [GroupChatController::class, 'store'])->name('group.store');
+Route::put('/group', [GroupChatController::class, 'update'])->name('group.update');
 Route::get('/group/create', [GroupChatController::class, 'create'])->name('group.create');
 Route::get('/group-list', [GroupChatController::class, 'group'])->name('group.list');
 Route::post('/group-send', [GroupChatController::class, 'send'])->name('group.send');

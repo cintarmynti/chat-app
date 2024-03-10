@@ -114,4 +114,22 @@ class GroupChatController extends Controller
         return response()->json(['data' => $anggota]);
     }
 
+    public function update(Request $request){
+        $group = Groups::find($request->id);
+        $data = [
+            'group_name' => $request->group_name,
+            'desc' => $request->desc
+        ];
+
+        if($request->hasFile('image_file')){
+            $image = $request->file('image_file');
+            $imageName = time().'.'.$image->getClientOriginalExtension();
+            $image -> storeAs('public/images', $imageName);
+            $data['image_group'] = 'images/'.$imageName;
+        }
+
+        $group -> update($data);
+        return redirect()->route('group');
+    }
+
 }
