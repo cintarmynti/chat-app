@@ -42,6 +42,8 @@ Route::get('/group-list', [GroupChatController::class, 'group'])->name('group.li
 Route::post('/group-send', [GroupChatController::class, 'send'])->name('group.send');
 Route::get('/group/{id}', [GroupChatController::class, 'getGroupMessage'])->name('group.chat');
 Route::get('/group-member/{id}', [GroupChatController::class, 'anggota'])->name('group.members');
+Route::get('/group-nonmember/{id}', [GroupChatController::class, 'getUserNotInGroup'])->name('group.nonMember');
+Route::post('/group-storemember', [GroupChatController::class, 'storeMember'])->name('group.storeMember');
 });
 
 

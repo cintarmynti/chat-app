@@ -45,6 +45,7 @@ class GroupChatController extends Controller
         }
         $group->save();
 
+        // 0 jadi admin 1 jadi anggota
         foreach ($request->input('anggota') as $userId) {
             $member = new group_members();
             $member->user_id = $userId;
@@ -131,5 +132,28 @@ class GroupChatController extends Controller
         $group -> update($data);
         return redirect()->route('group');
     }
+
+    public function getUserNotInGroup($id){
+        $userNotInGroup = User::leftJoin('group_members', function($join) use ($id){
+            $join->on('users.id', '=', 'group_members.user_id')
+            ->where('group_members.group_id', '=', $id);
+        })->whereNull('group_members.user_id')->select('users.*')->get();
+
+        return response()->json(['nonMember' => $userNotInGroup]);
+    }
+
+    public function storeMember(Request $request){
+        foreach ($request->input('anggota') as $userId) {
+            $member = new group_members();
+            $member->user_id = $userId;
+            $member->group_id = $request->group_id;
+            $member->role = 1;
+            $member->save();
+        }
+
+        return redirect()->route('group');
+    }
+
+
 
 }

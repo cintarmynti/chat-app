@@ -1,6 +1,8 @@
 @extends('layouts.default')
 
 @push('style')
+    <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/forms/selects/select2.css') }}">
+    <link rel="stylesheet" href="{{ asset('app-assets/vendors/css/forms/selects/select2.min.css') }}">
     <style>
         .sidebar-content {
             height: 100vh;
@@ -29,6 +31,18 @@
 
         .icon:hover {
             color: white;
+        }
+
+        .select2-container--default .select2-selection--multiple{
+            width: 450px;
+        }
+
+        .select2-container--default .select2-results>.select2-results__options{
+            width: 450px;
+        }
+
+        .select2-container--open .select2-dropdown--below{
+            width: 450px !important;
         }
     </style>
 @endpush
@@ -72,7 +86,8 @@
                             <h4 id="group-name"></h4>
                             <i class="ft-eye mr-2 icon" id="lihatAnggota" data-toggle="modal" data-target="#p"></i>
                             <i class="ft-edit mr-2 icon" id="editGroup" data-toggle="modal" data-target="#editGrup1"></i>
-                            <i class="ft-plus-square mr-2 icon"></i>
+                            <i class="ft-plus-square mr-2 icon" id="addMember" data-toggle="modal"
+                                data-target="#addAnggota"></i>
 
 
                         </div>
@@ -161,7 +176,7 @@
                             <label for="basicInput">desc</label>
                             <input type="text" name="desc" class="form-control input2" id="basicInput">
                         </fieldset>
-                            <input type="hidden" name="id" class="form-control input4" id="basicInput">
+                        <input type="hidden" name="id" class="form-control input4" id="basicInput">
                         <fieldset class="form-group">
                             <label for="basicInput">image</label>
                             <input type="file" name="image_file" class="form-control input3" id="basicInput">
@@ -179,11 +194,48 @@
             </div>
         </div>
     </div>
+
+
+    {{-- modal menambah anggota --}}
+    <!-- Modal -->
+    <div class="modal fade" id="addAnggota" tabindex="-1" role="dialog" aria-labelledby="addAnggotaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addAnggotaLabel">Tambah Anggota</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{route('group.storeMember')}}" method="POST">
+                        @csrf
+                        <input type="hidden" name="group_id" id="GrupId">
+                        <div class="form-group">
+                            <select name="anggota[]" class="select2 form-control" multiple="multiple">
+                                {{-- ini isi option  --}}
+                            </select>
+                          </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('script')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script src="{{ asset('app-assets/js/scripts/forms/select/form-select2.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('app-assets/vendors/js/forms/select/select2.full.min.js') }}" type="text/javascript"></script>
 
     <script>
         // ini untuk pusher nya
@@ -192,6 +244,9 @@
         });
 
         $(document).ready(function() {
+            // $('#addAnggota').on('shown.bs.modal', function() {
+            //     $('#select2Element').select2();
+            // });
             // Enable pusher logging - don't include this in production
             Pusher.logToConsole = true;
 
@@ -343,7 +398,7 @@
                         $('#nav-group').removeClass('hidden');
                         $('#lihatAnggota').data('anggota', itemId);
                         $('#editGroup').data('edit', itemId);
-
+                        $('#addMember').data('addMember', itemId);
                         fetchhGroupChat(response);
                     }
                 });
@@ -422,6 +477,30 @@
 
             });
 
+            // ketika click icon tambah
+            $(document).on('click', '.ft-plus-square', function() {
+                var addMemberId = $(this).data('addMember');
+                // console.log('masuk');
+                $.ajax({
+                    type: "GET",
+                    url: "/group-nonmember/" + addMemberId,
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                        $('#GrupId').val(addMemberId);
+
+                        var selectElement = $('.select2.form-control')
+                        var optionsHTML = '';
+
+                        $.each(response.nonMember, function(index, option){
+                            optionsHTML += '<option value="' + option.id + '">'+ option.name +'</option>'
+                        });
+
+                        selectElement.html(optionsHTML);
+                    }
+                });
+
+            });
 
             //fungsi untuk mengirim pesan kepada kontak lain
             $('#create-item-form').submit(function(e) {
