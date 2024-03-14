@@ -7,6 +7,7 @@
   <meta name="description" content="Stack admin is super flexible, powerful, clean &amp; modern responsive bootstrap 4 admin template with unlimited possibilities.">
   <meta name="keywords" content="admin template, stack admin template, dashboard template, flat admin template, responsive admin template, web app">
   <meta name="author" content="PIXINVENT">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Chat Application - Stack Responsive Bootstrap 4 Admin Template</title>
     @include('includes.style')
     @stack('style')

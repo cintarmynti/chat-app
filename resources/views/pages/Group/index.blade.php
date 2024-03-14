@@ -413,6 +413,7 @@
                     url: "/group-member/" + memberId,
                     dataType: "json",
                     success: function(response) {
+                        console.log(response);
                         var imageExist = 'http://127.0.0.1:8000/storage/';
                         var imageNull =
                             'http://127.0.0.1:8000/app-assets/images/profile-kosong.jpg'
@@ -429,7 +430,7 @@
 
                             // Create HTML string for each user
                             var newContent =
-                                '<a href="#" class="media border-0 my-1">' +
+                                '<a href="#" class="media border-0 my-1" >' +
                                 '<div class="media-left pr-1">' +
                                 '<span class="avatar avatar-md avatar-online">' +
                                 '<img class="media-object rounded-circle" src="' +
@@ -442,13 +443,37 @@
                                 '<h6 class="list-group-item-heading">' + item.users
                                 .name + '</h6>' +
                                 '<p class="list-group-item-text text-muted mb-0">' +
-                                item.users.desc + '</p>' +
+                                item.users.desc +
+                                '<span class="float-right primary list-member" data-group_id="'+ item.group_id +'" data-user_id="'+ item.users.id +'"><i class="font-medium-1 ft-x-square text-danger lighten-3"></i></span> </p>' +
                                 '</div>' +
                                 '</a>';
 
                             // Set the HTML content of the container
                             container.html(container.html() + newContent);
                         });
+                    }
+                });
+
+            });
+
+            $(document).on('click', '.float-right.primary.list-member', function() {
+                console.log("hai");
+                var user_id = $(this).data("user_id");
+                var group_id = $(this).data("group_id");
+                $(".float-right.primary.list-member").on("click", function(){
+                    $(this).closest("a").remove();
+                });
+
+
+                $.ajax({
+                    type: "POST",
+                    url: "/group-kick",
+                    data: {user_id: user_id, group_id:group_id, _token: $('meta[name="csrf-token"]').attr('content') },
+                    success: function (response) {
+                        // console.log(response);
+                    },
+                    error: function(xhr, status, error){
+                        console.log(error)
                     }
                 });
 

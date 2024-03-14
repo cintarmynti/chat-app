@@ -62,7 +62,7 @@ class GroupChatController extends Controller
         $userId = Auth::user()->id;
 
         $groups = Groups::whereHas('members', function ($query) use ($userId) {
-            $query->where('user_id', $userId);
+            $query->where('user_id', $userId)->where('member_status', 0);
         })->with(['chats' => function ($query) {
             $query->latest(); // Retrieve the latest chat for each group
         }])->get();
@@ -111,7 +111,7 @@ class GroupChatController extends Controller
     }
 
     public function anggota($id){
-        $anggota = group_members::with('users')->where('group_id', $id)->get();
+        $anggota = group_members::with('users')->where('group_id', $id)->where('member_status', 0)->get();
         return response()->json(['data' => $anggota]);
     }
 
@@ -137,21 +137,39 @@ class GroupChatController extends Controller
         $userNotInGroup = User::leftJoin('group_members', function($join) use ($id){
             $join->on('users.id', '=', 'group_members.user_id')
             ->where('group_members.group_id', '=', $id);
-        })->whereNull('group_members.user_id')->select('users.*')->get();
+        })->whereNull('group_members.user_id')->orWhere('group_members.member_status', '!=', 0)->select('users.*')->get();
 
         return response()->json(['nonMember' => $userNotInGroup]);
     }
 
     public function storeMember(Request $request){
+
         foreach ($request->input('anggota') as $userId) {
-            $member = new group_members();
-            $member->user_id = $userId;
-            $member->group_id = $request->group_id;
-            $member->role = 1;
-            $member->save();
+            $cekAnggota = group_members::where('group_id', $request->group_id)->where('user_id', $userId)->first();
+            if($cekAnggota == null){
+                $member = new group_members();
+                $member->user_id = $userId;
+                $member->group_id = $request->group_id;
+                $member->role = 1;
+                $member->save();
+            }else{
+                $cekAnggota->member_status = 0;
+                $cekAnggota->save();
+            }
+
         }
 
         return redirect()->route('group');
+    }
+
+    public function kickGroup(Request $request){
+        $member = group_members::where('group_id', $request->group_id)->where('user_id', $request->user_id)->first();
+        $member->member_status = 1;
+        $member->save();
+        // dd($member);
+
+        return redirect()->route('group');
+
     }
 
 

@@ -9,7 +9,7 @@ class group_members extends Model
 {
     use HasFactory;
     protected $table = 'group_members';
-    protected $fillable = ['user_id', 'group_id', 'role'];
+    protected $fillable = ['user_id', 'group_id', 'role', 'member_status'];
 
     public function group(){
         return $this->belongsTo(Groups::class, 'group_id', 'id');
