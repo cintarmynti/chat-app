@@ -73,7 +73,7 @@
             dataType: "json",
             success: function (response) {
                 // console.log("halo");
-                console.log(response);
+                // console.log(response);
 
                 if(response.image_path != null){
                     var imageUrl = 'storage/'+response.image_path;

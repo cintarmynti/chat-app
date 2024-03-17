@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('user_id');
             $table->integer('group_id');
             $table->integer('role'); // 0 => admin, 1 => anggota
+            $table->integer('member_status')->default(0);
             $table->timestamps();
         });
     }

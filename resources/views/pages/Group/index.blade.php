@@ -33,23 +33,22 @@
             color: white;
         }
 
-        .select2-container--default .select2-selection--multiple{
+        .select2-container--default .select2-selection--multiple {
             width: 450px;
         }
 
-        .select2-container--default .select2-results>.select2-results__options{
+        .select2-container--default .select2-results>.select2-results__options {
             width: 450px;
         }
 
-        .select2-container--open .select2-dropdown--below{
+        .select2-container--open .select2-dropdown--below {
             width: 450px !important;
         }
 
-        .img-group{
+        .img-group {
             height: 40px !important;
             width: 40px !important;
         }
-
     </style>
 @endpush
 
@@ -215,21 +214,21 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{route('group.storeMember')}}" method="POST">
+                    <form action="{{ route('group.storeMember') }}" method="POST">
                         @csrf
                         <input type="hidden" name="group_id" id="GrupId">
                         <div class="form-group">
                             <select name="anggota[]" class="select2 form-control" multiple="multiple">
                                 {{-- ini isi option  --}}
                             </select>
-                          </div>
+                        </div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
-            </form>
+                </form>
 
 
             </div>
@@ -277,7 +276,8 @@
                                 item.group_id + '" data-nama="' + item.group_name + '">' +
                                 '<div class="media-left pr-1">' +
                                 '<span class="avatar avatar-md avatar-online">' +
-                                '<img class="media-object rounded-circle img-group" src="' + imageUrl +
+                                '<img class="media-object rounded-circle img-group" src="' +
+                                imageUrl +
                                 '" alt="Generic placeholder image"><i></i>' +
                                 '</span>' +
                                 '</div>' +
@@ -367,6 +367,18 @@
                 var newMessage = data.chatMessage.content;
                 var chatClass = data.chatMessage.sender_id == authUserId ? ' ' : 'chat-left';
                 var senderName = data.chatMessage.users.name;
+                var currentTime = new Date();
+
+                var options = {
+                    hour12: true,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hourCycle: 'h24',
+                    timeZone: 'Asia/Jakarta'
+                };
+
+                var currentTimeFormatted = currentTime.toLocaleTimeString('id-ID', options);
+
                 var chatHtml = `
                 <div class="chat ${chatClass}">
                             <div class="chat-body">
@@ -374,7 +386,7 @@
                                 <p>
                                 <span class="sender-name">${senderName}</span><br>
                                 ${newMessage}
-                                <span class="sent-time">12.20</span>
+                                <span class="sent-time">${currentTimeFormatted}</span>
                                 </p>
                             </div>
                             </div>
@@ -399,9 +411,9 @@
                             .group_id.image_group :
                             '/app-assets/images/group-none.jpeg';
                         $('#img-group').attr('src', imageGroup);
-
                         $('#group-name').text(response.group_id.group_name)
                         $('#nav-group').removeClass('hidden');
+
                         $('#lihatAnggota').data('anggota', itemId);
                         $('#editGroup').data('edit', itemId);
                         $('#addMember').data('addMember', itemId);
@@ -419,7 +431,7 @@
                     url: "/group-member/" + memberId,
                     dataType: "json",
                     success: function(response) {
-                        console.log(response);
+                        // console.log(response);
                         var imageExist = 'http://127.0.0.1:8000/storage/';
                         var imageNull =
                             'http://127.0.0.1:8000/app-assets/images/profile-kosong.jpg'
@@ -450,7 +462,9 @@
                                 .name + '</h6>' +
                                 '<p class="list-group-item-text text-muted mb-0">' +
                                 item.users.desc +
-                                '<span class="float-right primary list-member" data-group_id="'+ item.group_id +'" data-user_id="'+ item.users.id +'"><i class="font-medium-1 ft-x-square text-danger lighten-3"></i></span> </p>' +
+                                '<span class="float-right primary list-member" data-group_id="' +
+                                item.group_id + '" data-user_id="' + item.users.id +
+                                '"><i class="font-medium-1 ft-x-square text-danger lighten-3"></i></span> </p>' +
                                 '</div>' +
                                 '</a>';
 
@@ -463,10 +477,9 @@
             });
 
             $(document).on('click', '.float-right.primary.list-member', function() {
-                console.log("hai");
                 var user_id = $(this).data("user_id");
                 var group_id = $(this).data("group_id");
-                $(".float-right.primary.list-member").on("click", function(){
+                $(".float-right.primary.list-member").on("click", function() {
                     $(this).closest("a").remove();
                 });
 
@@ -474,11 +487,15 @@
                 $.ajax({
                     type: "POST",
                     url: "/group-kick",
-                    data: {user_id: user_id, group_id:group_id, _token: $('meta[name="csrf-token"]').attr('content') },
-                    success: function (response) {
+                    data: {
+                        user_id: user_id,
+                        group_id: group_id,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
                         // console.log(response);
                     },
-                    error: function(xhr, status, error){
+                    error: function(xhr, status, error) {
                         console.log(error)
                     }
                 });
@@ -494,7 +511,7 @@
                     url: "/group/" + editId,
                     dataType: "json",
                     success: function(response) {
-                        console.log(response);
+                        // console.log(response);
                         $('.input1').val(response.group_id.group_name)
                         $('.input2').val(response.group_id.desc)
                         $('.input4').val(response.group_id.id)
@@ -523,8 +540,9 @@
                         var selectElement = $('.select2.form-control')
                         var optionsHTML = '';
 
-                        $.each(response.nonMember, function(index, option){
-                            optionsHTML += '<option value="' + option.id + '">'+ option.name +'</option>'
+                        $.each(response.nonMember, function(index, option) {
+                            optionsHTML += '<option value="' + option.id + '">' + option
+                                .name + '</option>'
                         });
 
                         selectElement.html(optionsHTML);

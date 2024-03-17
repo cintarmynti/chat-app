@@ -2,17 +2,46 @@
 
 @push('style')
     <style>
-        .users-list-padding{
+        .users-list-padding {
             background-color: white;
             height: 100vh;
         }
 
-        .list-contact{
+        .list-contact {
             background-color: white;
         }
 
-        .sidebar-left{
+        .sidebar-left {
             padding-left: 0;
+        }
+
+        .sidebar-content {
+            height: 100vh;
+            background-color: white;
+
+        }
+
+        .chat-app-window {
+            margin: 0;
+            padding: 0 !important;
+            position: relative;
+
+        }
+
+        .nav-group {
+            position: fixed;
+            width: 90%;
+            height: 70px;
+            z-index: 100;
+        }
+
+        .chat-application .chat-app-window{
+            text-align: left;
+        }
+
+        .chats {
+            margin-top: 50px;
+            /* Menambahkan margin atas pada .chats untuk menghindari tumpang tindih dengan .nav-group */
         }
     </style>
 @endpush
@@ -43,6 +72,19 @@
             </div>
             <div class="content-body">
                 <section class="chat-app-window">
+                    <div class="d-flex bg-primary m-0 p-0 nav-group hidden" id="nav-group">
+                        <div class="ml-3 media-left pr-1 align-self-center">
+                            <span class="avatar avatar-md avatar-online">
+                                <img class="media-object img-group rounded-circle" id="img-profile"
+                                    src="/app-assets/images/group-none.jpeg" alt="Generic placeholder image">
+                                <i></i>
+                            </span>
+                        </div>
+                        <div class="">
+                            <h4 id="profile-name" class="mt-1"> </h4>
+                           <p id="profile-desc"></p>
+                        </div>
+                    </div>
                     <div class="badge badge-default mb-1">Chat History</div>
                     <div class="chats">
                         <div class="chats" id="chat-container">
@@ -101,25 +143,29 @@
                     dataType: 'json',
                     url: "http://127.0.0.1:8000/user",
                     success: function(response) {
-                        console.log(response.data);
+                        // console.log(response.data);
                         var items = response.data;
 
 
                         var itemHtmlArray = items.map(function(item) {
-                            var imageUrl = item.image_path ? 'storage/' + item.image_path : '/app-assets/images/profile-kosong.jpg';
+                            var imageUrl = item.image_path ? 'storage/' + item.image_path :
+                                '/app-assets/images/profile-kosong.jpg';
                             var htmlContent =
                                 '<a href="#" class="list-contact media border-0 edit-item" data-id="' +
                                 item.user_id + '" data-nama="' + item.user_name + '">' +
                                 '<div class="media-left pr-1">' +
                                 '<span class="avatar avatar-md avatar-online">' +
-                                    '<img class="media-object rounded-circle" src="' + imageUrl + '" alt="Generic placeholder image"><i></i>' +
+                                '<img class="media-object rounded-circle" src="' + imageUrl +
+                                '" alt="Generic placeholder image"><i></i>' +
                                 '</span>' +
                                 '</div>' +
                                 '<div class="media-body w-100">' +
                                 '<h6 class="list-group-item-heading">' + item.user_name +
-                                '<span class="font-small-3 float-right primary">'+ item.last_chat_time +'</span>' +
+                                '<span class="font-small-3 float-right primary">' + item
+                                .last_chat_time + '</span>' +
                                 '</h6>' +
-                                '<p class="list-group-item-text text-muted mb-0"><i class="ft-check primary font-small-2"></i> '+ item.last_message +
+                                '<p class="list-group-item-text text-muted mb-0"><i class="ft-check primary font-small-2"></i> ' +
+                                item.last_message +
                                 '<span class="float-right primary"></span>' +
                                 '</p>' +
                                 '</div>' +
@@ -175,6 +221,7 @@
                             '<div class="chat-body ml-0">' +
                             '<div class="chat-content">' +
                             '<p>' + message.messages + '</p>' +
+                            '<p>' + message.time + '</p>' +
                             '</div>' +
                             '</div>' +
                             '</div>';
@@ -190,6 +237,17 @@
             //fitur untuk menambahkan chat baru
             function handleNewChatMessage(data, authUserId, chatContainer) {
                 // console.log(data);
+                var currentTime = new Date();
+
+                var options = {
+                    hour12: true,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hourCycle: 'h24',
+                    timeZone: 'Asia/Jakarta'
+                };
+
+                var currentTimeFormatted = currentTime.toLocaleTimeString('id-ID', options);
                 var newMessage = data.chatMessage.messages;
                 var chatClass = data.chatMessage.sender_id == authUserId ? ' ' : 'chat-left';
                 var chatHtml = `
@@ -197,6 +255,8 @@
                                         <div class="chat-body ml-0">
                                             <div class="chat-content">
                                                 <p>${newMessage}</p>
+                                                <p>${currentTimeFormatted}</p>
+
                                             </div>
                                         </div>
                                     </div>`;
@@ -217,7 +277,16 @@
                     dataType: "json",
                     success: function(response) {
                         // console.log(response);
+                        var imageGroup = response.user.image_path ? 'storage/' + response
+                            .user.image_path :
+                            '/app-assets/images/profile-kosong.jpg';
+                        $('#img-profile').attr('src', imageGroup);
+                        $('#profile-name').text(response.user.name)
+                        $('#profile-desc').text(response.user.desc)
+                        $('#nav-group').removeClass('hidden');
+
                         fetchUserChat(response)
+
                     }
                 });
 

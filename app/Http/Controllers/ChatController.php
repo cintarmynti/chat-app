@@ -52,12 +52,19 @@ class ChatController extends Controller
             $q->where('sender_id', Auth::user()->id);
             $q->where('receiver_id', $id);
         })
-            ->oRwhere(function ($q) use ($id) {
+            ->orWhere(function ($q) use ($id) {
                 $q->where('receiver_id', Auth::user()->id);
                 $q->where('sender_id', $id);
             })
             ->get();
-        return response()->json(['data' => $messages]);
+
+            foreach($messages as $m){
+                $m->time = Carbon::parse($m->created_at)->format('h:i A');
+            }
+        $receiver = User::where('id', $id)->first();
+            // dd($messages);
+
+        return response()->json(['data' => $messages, 'user' => $receiver]);
     }
 
     public function store(Request $request)
