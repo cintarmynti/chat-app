@@ -44,6 +44,12 @@
         .select2-container--open .select2-dropdown--below{
             width: 450px !important;
         }
+
+        .img-group{
+            height: 40px !important;
+            width: 40px !important;
+        }
+
     </style>
 @endpush
 
@@ -77,7 +83,7 @@
                     <div class="d-flex bg-primary m-0 p-0 nav-group hidden" id="nav-group">
                         <div class="ml-3 media-left pr-1 align-self-center">
                             <span class="avatar avatar-md avatar-online">
-                                <img class="media-object rounded-circle" id="img-group"
+                                <img class="media-object img-group rounded-circle" id="img-group"
                                     src="/app-assets/images/group-none.jpeg" alt="Generic placeholder image">
                                 <i></i>
                             </span>
@@ -271,7 +277,7 @@
                                 item.group_id + '" data-nama="' + item.group_name + '">' +
                                 '<div class="media-left pr-1">' +
                                 '<span class="avatar avatar-md avatar-online">' +
-                                '<img class="media-object rounded-circle" src="' + imageUrl +
+                                '<img class="media-object rounded-circle img-group" src="' + imageUrl +
                                 '" alt="Generic placeholder image"><i></i>' +
                                 '</span>' +
                                 '</div>' +
